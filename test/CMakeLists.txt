@@ -2,8 +2,6 @@
 # Add subdirectories
 #===============================================================================
 
-add_subdirectory(graph)
-add_subdirectory(performance)
 add_subdirectory(utility)
 
 #===============================================================================
