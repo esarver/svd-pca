@@ -8,15 +8,22 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - name: Configure
       run: cmake .
     - name: Build
       run: make -j2
     - name: Unit Tests
       run: ctest -V
-    - name: Archive
-      uses: actions/upload-artifact@v1
+    - name: Archive Executable
+      uses: actions/upload-artifact@master
       with:
         name: project_two
         path: bin/project_two
+    # - name: Performance Tests
+    #   run: make perf
+    # - name: Archive Performance Output
+    #   uses: actions/upload-artifact@master
+    #   with:
+    #     name: performance-data
+    #     path: performance
