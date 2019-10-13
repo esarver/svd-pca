@@ -18,5 +18,5 @@ jobs:
     - name: Archive
       uses: actions/upload-artifact@v1
       with:
-        name: project-two
-        path: bin/project-two
+        name: project_two
+        path: bin/project_two
