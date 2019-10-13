@@ -12,6 +12,6 @@ jobs:
     - name: Configure
       run: cmake .
     - name: Build
-      run: make
+      run: make -j2
     - name: Unit Tests
       run: ctest -V
