@@ -90,7 +90,7 @@ TEST (ProgramOptionsParser, CanParseCorrectInputForAlgo4)
     //set up the mock inputs
     char* moc_argv[] = {
         "program_name", // program name at index 0
-        "1", // Algorithm selection
+        "4", // Algorithm selection
         "image.pgm", // Filename
         NULL
     };
