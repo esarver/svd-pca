@@ -14,8 +14,8 @@ int main(int argc, char **argv)
     // std::ifstream in_file(ProgramOptions::graph_filepath());
 
   }
-  catch (const std::string &error_text) { // if the user mis-entered anything, just print the help.
-    std::cerr << error_text << std::endl;
+  catch (const std::runtime_error &e) { // if the user mis-entered anything, just print the help.
+    std::cerr << "ERROR: " << e.what() << std::endl;
     ProgramOptions::print_help();
   }
 }

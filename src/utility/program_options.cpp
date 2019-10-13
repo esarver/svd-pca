@@ -121,10 +121,6 @@ void ProgramOptions::print_help()
 void ProgramOptions::parse(int argc, char** argv)
 {
     //TODO UPDATE THIS!
-    int bfs_flag = 0;
-    int ff_flag = 0;
-    int circ_flag = 0;
-
     optind = 1; // reset getopt()
     opterr = 0; // Don't let getopt() print errors
 
@@ -132,7 +128,7 @@ void ProgramOptions::parse(int argc, char** argv)
 
     // Handle flag arguments
     // `getopt(argc, argv, <expected flags>)` only parses flag arguments (like -b)
-    // it returns and int that is one of the following:
+    // it returns an int that is one of the following:
     // =>  -1 if there are no more flag args
     // =>  the char of the expected flag, if found
     // =>  '?' if a flag arg was found but was not in the expected flags.
@@ -143,6 +139,7 @@ void ProgramOptions::parse(int argc, char** argv)
     {
         switch (c)
         {
+            // The only acceptable flag argument is "-h" for the help.
         case 'h':
             print_help();
             return;
@@ -150,57 +147,102 @@ void ProgramOptions::parse(int argc, char** argv)
             std::string error_string = "Unknown option \"";
             error_string += ((char)optopt);
             error_string += "\".";
-            throw error_string;
+            throw std::runtime_error(error_string.c_str());
         }
     }
 
-    // Only allow one algorithm to be chosen:
+    int required_positional_args = 2; // this is true for 1, 2, and 4
 
-    // handle positional options
-    // int required_positional_args = 3; // bfs
-    // if (ff_flag || circ_flag)
-    // {
-    //     required_positional_args = 1;
-    // }
+    int remaining_args = argc - optind;
 
-    // int remaining_args = argc - optind;
+    if(remaining_args < required_positional_args)
+    {
+        throw std::runtime_error("Too few positional arguments.");
+    }
 
-    // if(remaining_args < required_positional_args)
-    // {
-    //     throw "Too few positional arguments for selected algorithm.";
-    // }
+    // Check the first positional argument.
+    try
+    {
+        // Assume the first positional argument is in reference to the 
+        // algorithm to be used. This converts directly to the AlgorithmSelection
+        // enum if it is between 1 and 4, inclusive.
+        int selection = std::stoi(argv[optind]);
+        if( selection >= 1 && selection <= 4)
+        {
+            instance()->m_algorithm = (AlgorithmSelection) selection;
+        }
+        else
+        {
+            // Throw an exception if the algorithm selection number was not 1, 2, 3, or 4.
+            std::string error_string = "The number used to select the algorithm must be between 1 and 4, inclusive. Got \"";
+            error_string += argv[optind];
+            error_string += "\".";
+            throw std::runtime_error(error_string);
+        }
+        optind++;
+        remaining_args--;
+    }
+    catch(const std::exception& e)
+    {
+        // If we caught an exception, it was because whatever was in the algorithm selection spot 
+        // couldn't be read by std::stoi as an integer. Throw an exception of our own making.
+        std::string error_string = "Expected a number for the first argument, got \"";
+        error_string += argv[optind];
+        error_string += "\".";
+        throw std::runtime_error(error_string);
+    }
+    
+    if (instance()->m_algorithm == AlgorithmSelection::COMPRESSED_SVD && remaining_args < 3)
+    {
+        throw std::runtime_error("Too few positional arguments to use the selected algorithm.");
+    }
 
-    // // Assume that the positional arguments will be in the correct order
-    // // Assume that the given filepath is valid. Don't check it.
-    // for (int offset_optind = 0; optind + offset_optind < argc; offset_optind++)
-    // {
-    //     remaining_args--;
-    //     switch (offset_optind)
-    //     {
-    //     case 0:
-    //         instance()->m_graph_filepath = argv[offset_optind + optind];
-    //         break;
-    //     case 1:
-    //         try {
-    //             instance()->m_source_node = std::stoi(argv[offset_optind + optind]);
-    //         } catch (const std::invalid_argument&) {
-    //             throw "Could not parse source-node argument.";
-    //         }
-    //         break;
-    //     case 2:
-    //         try {
-    //             instance()->m_target_node = std::stoi(argv[offset_optind + optind]);
-    //         } catch (const std::invalid_argument&) {
-    //             throw "Could not parse target-node argument.";
-    //         }
-    //         break;
-    //     }
-
-    //     if (remaining_args <= 0)
-    //     {
-    //         break;
-    //     }
-    // }
+    // Assume that the positional arguments will be in the correct order
+    // Assume that the given filepath is valid. Don't check it.
+    for (int offset_optind = 0; optind + offset_optind < argc; offset_optind++)
+    {
+        remaining_args--;
+        switch (instance()->m_algorithm)
+        {
+        case AlgorithmSelection::TO_BINARY:
+            instance()->m_text_pgm_filepath = argv[optind + offset_optind];
+            return;
+        case AlgorithmSelection::FROM_BINARY:
+            instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
+            return;
+        case AlgorithmSelection::COMPRESSED_SVD:
+            if(offset_optind == 0)
+            {
+                instance()->m_pgm_header_filepath = argv[optind + offset_optind];
+            }
+            else if (offset_optind == 1)
+            {
+                instance()->m_svd_matrices_filepath = argv[optind + offset_optind];
+            }
+            else
+            {
+                try
+                {
+                    instance()->m_approximation_rank = std::stoi(argv[optind + offset_optind]);
+                }
+                catch(const std::exception& e)
+                {
+                    std::string error_string = "Expected a number for the approximation rank argument, got \"";
+                    error_string += argv[optind];
+                    error_string += "\".";
+                    throw std::runtime_error(error_string);
+                }
+                return;
+            }
+            
+            break;
+        case AlgorithmSelection::FROM_COMPRESSED_SVD:
+            instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
+            return;
+        case AlgorithmSelection::PCA:
+            throw std::runtime_error("PCA is unimplemented.");
+        } 
+    }
 }
 
 ProgramOptions::ProgramOptions()
