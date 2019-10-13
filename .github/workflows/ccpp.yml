@@ -9,9 +9,10 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: configure
+    - name: Configure
       run: cmake .
-    - name: make
+    - name: Build
       run: make
-    - name: test
+  test:
+    - name: Unit Tests
       run: ctest -V
