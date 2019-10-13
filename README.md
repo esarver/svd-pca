@@ -1,4 +1,4 @@
-# Advanced Algorithms, Project 2 - Image Compression Using SVD and Dimensionality Reduction Using PCA#
+# Advanced Algorithms, Project 2 - Image Compression Using SVD and Dimensionality Reduction Using PCA #
 
 
 #### Authors: ####

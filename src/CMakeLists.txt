@@ -2,7 +2,7 @@ add_subdirectory(utility)
 
 set(
     exec_name
-    project_one
+    project_two
 )
 
 set(
