@@ -8,10 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - working-directory: build 
     - uses: actions/checkout@v1
     - name: configure
-      run: cmake ..
+      run: cmake .
     - name: make
       run: make
     - name: test
