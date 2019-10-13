@@ -3,7 +3,7 @@ name: C/C++ CI
 on: [push]
 
 jobs:
-  build:
+  build_and_test:
 
     runs-on: ubuntu-latest
     
@@ -15,3 +15,8 @@ jobs:
       run: make -j2
     - name: Unit Tests
       run: ctest -V
+    - name: Archive
+      uses: actions/upload-artifact@v1
+      with:
+        name: project-two
+        path: bin/project-two
