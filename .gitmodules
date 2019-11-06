@@ -1,0 +1,4 @@
+[submodule "vendor/eigen-git-mirror"]
+	path = vendor/eigen-git-mirror
+	url = https://github.com/eigenteam/eigen-git-mirror.git
+	branch = master
