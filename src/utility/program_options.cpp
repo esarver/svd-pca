@@ -207,10 +207,14 @@ void ProgramOptions::parse(int argc, char** argv)
         case AlgorithmSelection::TO_BINARY:
             instance()->m_text_pgm_filepath = argv[optind + offset_optind];
             //TODO: set binary name
+            instance()->m_binary_pgm_filepath = instance()->m_text_pgm_filepath;
+            instance()->m_binary_pgm_filepath.append(".b");
             return;
         case AlgorithmSelection::FROM_BINARY:
             instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
             //TODO: set ascii name
+            instance()->m_text_pgm_filepath = instance()->m_binary_pgm_filepath;
+            instance()->m_text_pgm_filepath.append(".a");
             return;
         case AlgorithmSelection::COMPRESSED_SVD:
             if(offset_optind == 0)
