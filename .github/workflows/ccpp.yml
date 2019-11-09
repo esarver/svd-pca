@@ -9,6 +9,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@master
+    - name: Submodules
+      run: git submodules init
     - name: Configure
       run: cmake .
     - name: Build
