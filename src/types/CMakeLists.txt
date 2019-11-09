@@ -15,4 +15,4 @@ add_library(types
     ${headers}
 )
 
-target_include_directories(types PUBLIC .)
+target_include_directories(types PUBLIC . ../types/)
