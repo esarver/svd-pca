@@ -1,4 +1,5 @@
 add_subdirectory(utility)
+add_subdirectory(types)
 
 set(
     exec_name

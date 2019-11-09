@@ -6,6 +6,8 @@ enable_testing()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+set(eigen_dir ${CMAKE_SOURCE_DIR}/vendor/eigen-git-mirror)
+
 add_subdirectory(src)
 add_subdirectory(test)
 

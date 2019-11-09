@@ -12,6 +12,19 @@
 
 ---
 
+## Cloning ##
+This project uses git submodules to get the Eigen library. be sure to clone with the submodules. 
+```bash
+git clone --recurse-submodules <url-to-this-repo>
+```
+
+If you have already cloned the repos but haven't gotten the submodules, run:
+```bash
+git submodule init
+git submodule update
+```
+
+
 ## Building ##
 **NOTE**: The google test library is pulled down during the first build 
 automatically. Be sure you are connected to the internet before your first build.
