@@ -1,5 +1,6 @@
 add_subdirectory(utility)
 add_subdirectory(types)
+add_subdirectory(processing)
 
 set(
     exec_name
@@ -20,10 +21,14 @@ target_include_directories(
     ${exec_name}
     PRIVATE
     utility
+    types
+    processing
 )
 
 target_link_libraries(
     ${exec_name}
     PRIVATE
     utility
+    types
+    processing
 )

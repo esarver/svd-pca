@@ -206,9 +206,11 @@ void ProgramOptions::parse(int argc, char** argv)
         {
         case AlgorithmSelection::TO_BINARY:
             instance()->m_text_pgm_filepath = argv[optind + offset_optind];
+            //TODO: set binary name
             return;
         case AlgorithmSelection::FROM_BINARY:
             instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
+            //TODO: set ascii name
             return;
         case AlgorithmSelection::COMPRESSED_SVD:
             if(offset_optind == 0)
@@ -218,6 +220,7 @@ void ProgramOptions::parse(int argc, char** argv)
             else if (offset_optind == 1)
             {
                 instance()->m_svd_matrices_filepath = argv[optind + offset_optind];
+                //TODO: set binary name
             }
             else
             {
@@ -238,6 +241,7 @@ void ProgramOptions::parse(int argc, char** argv)
             break;
         case AlgorithmSelection::FROM_COMPRESSED_SVD:
             instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
+            //TODO: Set ascii name
             return;
         case AlgorithmSelection::PCA:
             throw std::runtime_error("PCA is unimplemented.");
