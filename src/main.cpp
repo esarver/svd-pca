@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <string.h>
 
+#include "convert.hpp"
 #include "program_options.hpp"
 
 int main(int argc, char **argv)
@@ -15,16 +17,38 @@ int main(int argc, char **argv)
     {
     case ProgramOptions::AlgorithmSelection::TO_BINARY:
     {
-        std::string input_file = ProgramOptions::text_pgm_filepath();
-        std::string output_file = ProgramOptions::binary_pgm_filepath();
+        //std::string input_file = ProgramOptions::text_pgm_filepath();
+        //std::string output_file = ProgramOptions::binary_pgm_filepath();
+        //std::cout << input_file << " " << output_file;
         // TODO: ASCII to Binary implementation here...
+        bool error;
+        char file_in_name[80];
+        char file_out_name[80];
+        int length = strlen(argv[2]);
+        strcpy(file_in_name, argv[2]);
+        strncpy (file_out_name,file_in_name,length-4);
+        file_out_name[length-4] = '\0';
+        std::cout << file_out_name << std::endl;
+        strcat (file_out_name,"_b.pgm");
+        std::cout << file_out_name;
+        error = pgma_to_pgmb(file_in_name,file_out_name);
         return 0;
     }
     case ProgramOptions::AlgorithmSelection::FROM_BINARY:
     {
-        std::string input_file = ProgramOptions::binary_pgm_filepath();
-        std::string output_file = ProgramOptions::text_pgm_filepath();
+        //std::string input_file = ProgramOptions::binary_pgm_filepath();
+        //std::string output_file = ProgramOptions::text_pgm_filepath();
         // TODO: Binary to ASCII implementation here...
+        bool error;
+        char file_in_name[80];
+        char file_out_name[80];
+        int length = strlen(argv[2]);
+        strcpy(file_in_name, argv[2]);
+        strncpy (file_out_name,file_in_name,length-4);
+        file_out_name[length-4] = '\0';
+        strcat (file_out_name,"_copy.pgm");
+        //cout << file_out_name;
+        error = pgmb_to_pgma ( file_in_name, file_out_name );
         return 0;
     }
     case ProgramOptions::AlgorithmSelection::COMPRESSED_SVD:
