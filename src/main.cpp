@@ -66,6 +66,14 @@ int main(int argc, char **argv)
         // TODO: (SVD)^-1 implementation here...
         return 0;
     }
+    case ProgramOptions::AlgorithmSelection::RANDOM_IMAGE:
+    {
+        std::string output_file = ProgramOptions::text_pgm_filepath();
+        char file_out_name[80];
+        strcpy(file_out_name, output_file.c_str());
+        // TODO Random image generation here.
+        return 0;
+    }
     default:
         throw std::runtime_error("Unknown algorithm type.");
     }

@@ -1,5 +1,3 @@
-set (CMAKE_CXX_STANDARD 11)
-
 set(
   sources
   svd.cpp
@@ -21,3 +19,4 @@ target_include_directories(processing PUBLIC
     ${CMAKE_SOURCE_DIR}/src/types
     ${CMAKE_SOURCE_DIR}/vendor/eigen-git-mirror
     )
+

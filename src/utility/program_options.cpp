@@ -5,6 +5,9 @@
 #include <getopt.h>
 #include <iostream>
 #include <sstream>
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
 
 ProgramOptions* ProgramOptions::s_instance = nullptr;
 
@@ -167,14 +170,14 @@ void ProgramOptions::parse(int argc, char** argv)
         // algorithm to be used. This converts directly to the AlgorithmSelection
         // enum if it is between 1 and 4, inclusive.
         int selection = std::stoi(argv[optind]);
-        if( selection >= 1 && selection <= 4)
+        if( selection >= 1 && selection <= 5)
         {
             instance()->m_algorithm = (AlgorithmSelection) selection;
         }
         else
         {
             // Throw an exception if the algorithm selection number was not 1, 2, 3, or 4.
-            std::string error_string = "The number used to select the algorithm must be between 1 and 4, inclusive. Got \"";
+            std::string error_string = "The number used to select the algorithm must be between 1 and 5, inclusive. Got \"";
             error_string += argv[optind];
             error_string += "\".";
             throw std::runtime_error(error_string);
@@ -246,9 +249,11 @@ void ProgramOptions::parse(int argc, char** argv)
         case AlgorithmSelection::FROM_COMPRESSED_SVD:
             instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
             //TODO: Set ascii name
+            instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath);//TODO!!!
             return;
-        case AlgorithmSelection::PCA:
-            throw std::runtime_error("PCA is unimplemented.");
+        case AlgorithmSelection::RANDOM_IMAGE:
+            instance()->m_text_pgm_filepath = argv[optind + offset_optind];
+            return;
         } 
     }
 }
