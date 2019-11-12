@@ -8,6 +8,7 @@ enable_testing()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(eigen_dir ${CMAKE_SOURCE_DIR}/vendor/eigen-git-mirror)
+set(half_dir ${CMAKE_SOURCE_DIR}/vendor/half-2.1.0/include)
 
 add_subdirectory(src)
 add_subdirectory(test)
