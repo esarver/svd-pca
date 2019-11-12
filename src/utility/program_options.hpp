@@ -25,7 +25,7 @@ public:
         FROM_BINARY = 2,
         COMPRESSED_SVD = 3,
         FROM_COMPRESSED_SVD = 4,
-        PCA = 5
+        RANDOM_IMAGE = 5
     };
 
     /**

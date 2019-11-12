@@ -1,5 +1,3 @@
-set (CMAKE_CXX_STANDARD 11)
-
 set(
   sources
   float16.cpp

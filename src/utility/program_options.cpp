@@ -5,6 +5,9 @@
 #include <getopt.h>
 #include <iostream>
 #include <sstream>
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
 
 ProgramOptions* ProgramOptions::s_instance = nullptr;
 
@@ -93,6 +96,10 @@ void ProgramOptions::print_help()
     std::cout << "                                        SVD-matrices-file," << std::endl;
     std::cout << "                                        pgm-file (binary)" << std::endl;
     std::cout << std::endl;
+    std::cout << "     5                   Create a randomly generated PGM image to the given file" << std::endl;
+    std::cout << "                              Requires: pgm-file" << std::endl;
+    std::cout << "                              Outputs:  pgm-file (ASCII)," << std::endl;
+    std::cout << std::endl;
     std::cout << std::endl;
     std::cout << " The following options are required as stated above:" << std::endl;
     std::cout << "    pgm-file (ASCII)     Textual PGM file conforming to the" << std::endl;
@@ -112,9 +119,9 @@ void ProgramOptions::print_help()
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << " AUTHORS:" << std::endl;
-    std::cout << "      Team Member 1    <TM001@zips.uakron.edu>" << std::endl;
-    std::cout << "      Team Member 2    <TM0002@zips.uakron.edu>" << std::endl;
+    std::cout << "          Quansu Lu    <ql21@zips.uakron.edu>" << std::endl;
     std::cout << "       Edwin Sarver    <els40@zips.uakron.edu>" << std::endl;
+    std::cout << "          Ying Wang    <yw73@zips.uakron.edu>" << std::endl;
 
 }
 
@@ -167,14 +174,14 @@ void ProgramOptions::parse(int argc, char** argv)
         // algorithm to be used. This converts directly to the AlgorithmSelection
         // enum if it is between 1 and 4, inclusive.
         int selection = std::stoi(argv[optind]);
-        if( selection >= 1 && selection <= 4)
+        if( selection >= 1 && selection <= 5)
         {
             instance()->m_algorithm = (AlgorithmSelection) selection;
         }
         else
         {
             // Throw an exception if the algorithm selection number was not 1, 2, 3, or 4.
-            std::string error_string = "The number used to select the algorithm must be between 1 and 4, inclusive. Got \"";
+            std::string error_string = "The number used to select the algorithm must be between 1 and 5, inclusive. Got \"";
             error_string += argv[optind];
             error_string += "\".";
             throw std::runtime_error(error_string);
@@ -246,9 +253,11 @@ void ProgramOptions::parse(int argc, char** argv)
         case AlgorithmSelection::FROM_COMPRESSED_SVD:
             instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
             //TODO: Set ascii name
+            instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath);//TODO!!!
             return;
-        case AlgorithmSelection::PCA:
-            throw std::runtime_error("PCA is unimplemented.");
+        case AlgorithmSelection::RANDOM_IMAGE:
+            instance()->m_text_pgm_filepath = argv[optind + offset_optind];
+            return;
         } 
     }
 }
