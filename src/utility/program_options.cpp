@@ -96,6 +96,10 @@ void ProgramOptions::print_help()
     std::cout << "                                        SVD-matrices-file," << std::endl;
     std::cout << "                                        pgm-file (binary)" << std::endl;
     std::cout << std::endl;
+    std::cout << "     5                   Create a randomly generated PGM image to the given file" << std::endl;
+    std::cout << "                              Requires: pgm-file" << std::endl;
+    std::cout << "                              Outputs:  pgm-file (ASCII)," << std::endl;
+    std::cout << std::endl;
     std::cout << std::endl;
     std::cout << " The following options are required as stated above:" << std::endl;
     std::cout << "    pgm-file (ASCII)     Textual PGM file conforming to the" << std::endl;
@@ -115,9 +119,9 @@ void ProgramOptions::print_help()
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << " AUTHORS:" << std::endl;
-    std::cout << "      Team Member 1    <TM001@zips.uakron.edu>" << std::endl;
-    std::cout << "      Team Member 2    <TM0002@zips.uakron.edu>" << std::endl;
+    std::cout << "          Quansu Lu    <ql21@zips.uakron.edu>" << std::endl;
     std::cout << "       Edwin Sarver    <els40@zips.uakron.edu>" << std::endl;
+    std::cout << "          Ying Wang    <yw73@zips.uakron.edu>" << std::endl;
 
 }
 
