@@ -1,5 +1,4 @@
 add_subdirectory(utility)
-add_subdirectory(types)
 add_subdirectory(processing)
 
 set(
