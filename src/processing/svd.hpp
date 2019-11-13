@@ -23,7 +23,7 @@ public:
         std::vector<half_float::half> V;
     };
 
-    static decomp pgmSvdToHalfStream(std::istream pgm, int rank);
+    static decomp pgmSvdToHalfStream(std::istream &pgm, int rank);
 
     static void writePgmAsSvd(const std::string &output_path, decomp decomposition);
 

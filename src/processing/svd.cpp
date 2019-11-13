@@ -6,7 +6,7 @@
 
 #include <Eigen/SVD>
 
-SVD::decomp SVD::pgmSvdToHalfStream(std::istream pgm, int rank)
+SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
 {
     int line_count = 0;
     unsigned int width = 0;
