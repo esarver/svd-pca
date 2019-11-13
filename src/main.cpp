@@ -109,3 +109,23 @@ int main(int argc, char **argv)
   }
 }
 
+<<<<<<< HEAD
+=======
+void random_pgm(string filename, int xsize, int ysize)
+{
+    ofstream newpgm;
+    int num;
+    filename = filename + ".pgm";
+    newpgm.open(filename);
+    pgma_write_header(newpgm,filename,xsize,ysize,255);
+    for(int i=0;i<xsize;i++)
+    {
+        for(int z=0;z<ysize;z++)
+        {
+            num = rand()%255+1;
+            newpgm << num << " ";
+        }
+        newpgm << "\n";
+    }
+}
+>>>>>>> 03a96ec93dc514c2c4d3c299214bda56a0f0cf21
