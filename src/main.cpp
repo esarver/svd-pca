@@ -69,9 +69,15 @@ int main(int argc, char **argv)
     case ProgramOptions::AlgorithmSelection::RANDOM_IMAGE:
     {
         std::string output_file = ProgramOptions::text_pgm_filepath();
-        char file_out_name[80];
-        strcpy(file_out_name, output_file.c_str());
-        // TODO Random image generation here.
+        int xsize;
+        int ysize;
+        std::cout << "Please input the xsize : ";
+        std::cin >> xsize;
+        std::cout << "Please input the ysize : ";
+        std::cin >> ysize;
+        //cout << xsize << " " << ysize;
+        random_pgm(output_file,xsize,ysize);
+        std::cout << "pass";
         return 0;
     }
     default:
@@ -83,4 +89,22 @@ int main(int argc, char **argv)
     std::cerr << "ERROR: " << e.what() << std::endl;
     ProgramOptions::print_help();
   }
+}
+
+void random_pgm(string filename, int xsize, int ysize)
+{
+    ofstream newpgm;
+    int num;
+    filename = filename + ".pgm";
+    newpgm.open(filename);
+    pgma_write_header(newpgm,filename,xsize,ysize,255);
+    for(int i=0;i<xsize;i++)
+    {
+        for(int z=0;z<ysize;z++)
+        {
+            num = rand()%255+1;
+            newpgm << num << " ";
+        }
+        newpgm << "\n";
+    }
 }
