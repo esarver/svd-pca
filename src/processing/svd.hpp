@@ -6,7 +6,7 @@
 #include <include/half.hpp>
 
 class SVD {
-private:
+public:
     struct metadata
     {
         unsigned long U_width, U_height;
@@ -14,10 +14,18 @@ private:
         unsigned long V_width, V_height;
         unsigned char max_value;
     };
-public:
-    std::tuple<std::pair<int, int>, std::vector<half_float::half>, std::vector<half_float::half>, std::pair<int, int>, std::vector<half_float::half>> pgmSvdToHalfStream(std::istream pgm, int rank);
 
-    void writePgmAsSvd(const std::string &output_path, unsigned long U_width, unsigned long U_height, std::vector<half_float::half> U, std::vector<half_float::half> S, unsigned long V_width, unsigned long V_height, std::vector<half_float::half> V);
+    struct decomp
+    {
+        metadata meta;
+        std::vector<half_float::half> U;
+        std::vector<half_float::half> S;
+        std::vector<half_float::half> V;
+    };
 
-    std::string svdToPGM(const std::string &input_filename, const std::string &output_filename);
+    static decomp pgmSvdToHalfStream(std::istream pgm, int rank);
+
+    static void writePgmAsSvd(const std::string &output_path, decomp decomposition);
+
+    static std::string svdToPGM(const std::string &input_filename, const std::string &output_filename);
 };

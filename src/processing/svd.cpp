@@ -6,7 +6,7 @@
 
 #include <Eigen/SVD>
 
-std::tuple<std::pair<int, int>, std::vector<half_float::half>, std::vector<half_float::half>, std::pair<int, int>, std::vector<half_float::half>> SVD::pgmSvdToHalfStream(std::istream pgm, int rank)
+SVD::decomp SVD::pgmSvdToHalfStream(std::istream pgm, int rank)
 {
     int line_count = 0;
     unsigned int width = 0;
@@ -103,7 +103,7 @@ std::tuple<std::pair<int, int>, std::vector<half_float::half>, std::vector<half_
 
 }
 
-void SVD::writePgmAsSvd(const std::string &output_path, unsigned long U_width, unsigned long U_height, std::vector<half_float::half> U, std::vector<half_float::half> S, unsigned long V_width, unsigned long V_height, std::vector<half_float::half> V)
+void SVD::writePgmAsSvd(const std::string &output_path, decomp decomposition)
 {
     std::ofstream file(output_path, std::ios::out | std::ios::binary);
 
