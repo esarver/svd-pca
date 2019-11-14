@@ -9,9 +9,9 @@ class SVD {
 public:
     struct metadata
     {
-        unsigned long U_width, U_height;
-        unsigned long S_length;
-        unsigned long V_width, V_height;
+        long U_height;
+        long V_width;
+        long rank;
         unsigned char max_value;
     };
 

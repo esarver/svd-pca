@@ -20,7 +20,6 @@ target_include_directories(
     ${exec_name}
     PRIVATE
     utility
-    types
     processing
 )
 
@@ -28,7 +27,6 @@ target_link_libraries(
     ${exec_name}
     PRIVATE
     utility
-    types
     processing
 )
 

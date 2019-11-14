@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include <iostream>
 
 #include <Eigen/SVD>
 
@@ -11,10 +12,16 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
     int line_count = 0;
     unsigned int width = 0;
     unsigned int height = 0;
+    unsigned char max_value = 0;
 
     std::vector<double> original_values;
 
     for(std::string line; std::getline(pgm, line);line_count++) {
+        if(line.find('#') != std::string::npos)
+        {
+            line_count--;
+            continue;
+        }
         if(line_count == 1)
         {
            std::stringstream ss(line);
@@ -26,6 +33,10 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
 
            width = std::stoi(width_string);
            height = std::stoi(height_string);
+        }
+        else if (line_count == 2)
+        {
+            max_value = std::stoi(line);
         }
         else if(line_count >= 3) // We don't need the "max value" for our calculations.
         {
@@ -56,13 +67,17 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
     auto S = svd.singularValues();
     auto V = svd.matrixV();
 
+//    std::cout << "U:" << std::endl << U << std::endl;
+//    std::cout << "S:" << std::endl << S << std::endl;
+//    std::cout << "V:" << std::endl << V << std::endl;
+
     std::vector<half_float::half> U_vec;
     std::vector<half_float::half> S_vec;
     std::vector<half_float::half> V_vec;
 
-    for(unsigned int row = 0; row < U.rows(); row++)
+    for (unsigned int column = 0; column < rank; column++)
     {
-        for (unsigned int column = 0; column < U.cols(); column++)
+        for(unsigned int row = 0; row < U.rows(); row++)
         {
             double value = U(row, column);
             half_float::half half_p = half_float::half_cast<half_float::half>(value);
@@ -70,20 +85,17 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
         }
     }
 
-    for(unsigned int row = 0; row < S.rows(); row++)
+    for(unsigned int row = 0; row < rank; row++)
     {
-        for (unsigned int column = 0; column < S.cols(); column++)
+        double value = S(row, 0);
+        half_float::half half_p = half_float::half_cast<half_float::half>(value);
+        if(half_p > 0 || half_p < 0)
         {
-            double value = S(row, column);
-            half_float::half half_p = half_float::half_cast<half_float::half>(value);
-            if(half_p > 0 || half_p < 0)
-            {
-                S_vec.push_back(half_p);
-            }
+            S_vec.push_back(half_p);
         }
     }
 
-    for(unsigned int row = 0; row < V.rows(); row++)
+    for(unsigned int row = 0; row < rank; row++)
     {
         for (unsigned int column = 0; column < V.cols(); column++)
         {
@@ -94,10 +106,14 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
     }
 
     return {
-        {U.rows(), U.cols()},
+        {
+            U.rows(),
+            V.cols(),
+            rank,
+            max_value
+        },
         U_vec,
         S_vec,
-        {V.rows(), V.cols()},
         V_vec
     };
 
@@ -107,20 +123,19 @@ void SVD::writePgmAsSvd(const std::string &output_path, decomp decomposition)
 {
     std::ofstream file(output_path, std::ios::out | std::ios::binary);
 
-    metadata sizes = {U_width, U_height, S.size(), V_width, V_height};
-    file.write((char*)&sizes, sizeof (metadata));
+    file.write((char*)&(decomposition.meta), sizeof (metadata));
 
-    for(const auto &value : U)
+    for(const auto &value : decomposition.U)
     {
         file.write((char*)&value, sizeof (half_float::half));
     }
 
-    for (const auto &value : S)
+    for (const auto &value : decomposition.S)
     {
         file.write((char*)&value, sizeof (half_float::half));
     }
 
-    for (const auto &value : V)
+    for (const auto &value : decomposition.V)
     {
         file.write((char*)&value, sizeof (half_float::half));
     }
@@ -148,26 +163,26 @@ std::string SVD::svdToPGM(const std::string &input_filename, const std::string &
     file.close();
 
     // Calculate approximated PGM
-    unsigned long U_size = sizes->U_width * sizes->U_height;
-    unsigned long V_size = sizes->V_width * sizes->V_height;
-    Eigen::MatrixXd U(sizes->U_height, sizes->U_width);
+    unsigned long U_size =  sizes->rank * sizes->U_height;
+    unsigned long V_size = sizes->V_width * sizes->rank;
+    Eigen::MatrixXd U(sizes->U_height, sizes->rank);
     Eigen::MatrixXd S(sizes->V_width, sizes->U_height);
-    Eigen::MatrixXd V(sizes->V_height, sizes->V_width);
+    Eigen::MatrixXd V(sizes->rank, sizes->V_width);
     unsigned long count = 0;
     for(const auto &value: values)
     {
         if(count < (U_size))
         {
-            U(count%sizes->U_width, count/sizes->U_width) = half_float::half_cast<double>(value);
+            U(count%sizes->rank, count/sizes->rank) = half_float::half_cast<double>(value);
 
         }
-        else if(count < (U_size) + sizes->S_length )
+        else if(count < (U_size) + sizes->rank )
         {
             S(count - U_size, count - U_size) = half_float::half_cast<double>(value);
         }
-        else if(count < (U_size + sizes->S_length) + V_size)
+        else if(count < (U_size + sizes->rank) + V_size)
         {
-            unsigned long v_count = count - (U_size + sizes->S_length);
+            unsigned long v_count = count - (U_size + sizes->rank);
             S(v_count % sizes->V_width, v_count / sizes->V_width) = half_float::half_cast<double>(value);
         }
     }

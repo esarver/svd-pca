@@ -26,13 +26,9 @@ TEST(SVD, ProducesExpectedValuesRank1)
     SVD::decomp decomposition = SVD::pgmSvdToHalfStream(fake_file, 1);
 
     // Check meta information
-    EXPECT_EQ(decomposition.meta.U_width, 1);
     EXPECT_EQ(decomposition.meta.U_height, 8);
-
-    EXPECT_EQ(decomposition.meta.S_length, 1);
-
     EXPECT_EQ(decomposition.meta.V_width, 8);
-    EXPECT_EQ(decomposition.meta.V_height, 1);
+    EXPECT_EQ(decomposition.meta.rank, 1);
 
     // Check matrix information
     EXPECT_EQ(decomposition.U.size(), 8);
@@ -47,7 +43,7 @@ TEST(SVD, ProducesExpectedValuesRank1)
                   half_float::half(0.383043f),
                   half_float::half(0.387861f),
                   half_float::half(0.401327f),
-                  half_float::half(0.0f)
+                  half_float::half(0.0f),
               };
 
     std::vector<half_float::half> expected_S = {
@@ -61,9 +57,10 @@ TEST(SVD, ProducesExpectedValuesRank1)
                   half_float::half(0.0f),
                   half_float::half(0.0f),
                   half_float::half(0.0f),
+                  half_float::half(1.0f),
                   half_float::half(0.0f),
-                  half_float::half(1.0f)
               };
+
     // Check Values
     EXPECT_EQ(decomposition.U, expected_U);
     EXPECT_EQ(decomposition.S, expected_S);
@@ -77,13 +74,9 @@ TEST(SVD, ProducesExpectedValuesRank2)
     SVD::decomp decomposition = SVD::pgmSvdToHalfStream(fake_file, 2);
 
     // Check meta information
-    EXPECT_EQ(decomposition.meta.U_width, 2);
     EXPECT_EQ(decomposition.meta.U_height, 8);
-
-    EXPECT_EQ(decomposition.meta.S_length, 2);
-
     EXPECT_EQ(decomposition.meta.V_width, 8);
-    EXPECT_EQ(decomposition.meta.V_height, 2);
+    EXPECT_EQ(decomposition.meta.rank, 2);
 
     // Check matrix information
     EXPECT_EQ(decomposition.U.size(), 8 * 2);
@@ -99,6 +92,7 @@ TEST(SVD, ProducesExpectedValuesRank2)
                   half_float::half(0.387861f),
                   half_float::half(0.401327f),
                   half_float::half(0.0f),
+
                   half_float::half(0.0f),
                   half_float::half(0.864596f),
                   half_float::half(-0.23993f),
@@ -106,12 +100,12 @@ TEST(SVD, ProducesExpectedValuesRank2)
                   half_float::half(-0.23993f),
                   half_float::half(-0.229162f),
                   half_float::half(-0.165105f),
-                  half_float::half(0.0f)
+                  half_float::half(0.0f),
               };
 
     std::vector<half_float::half> expected_S = {
                 half_float::half(817.371f),
-                half_float::half(330.45f)
+                half_float::half(330.45f),
               };
 
     std::vector<half_float::half> expected_V = {
@@ -121,16 +115,17 @@ TEST(SVD, ProducesExpectedValuesRank2)
                   half_float::half(0.0f),
                   half_float::half(0.0f),
                   half_float::half(0.0f),
-                  half_float::half(0.0f),
                   half_float::half(1.0f),
+                  half_float::half(0.0f),
+
                   half_float::half(0.0787598f),
                   half_float::half(0.0711648f),
-                  half_float::half(-0.412309f),
+                  half_float::half(0.412309f),
                   half_float::half(0.904839f),
-                  half_float::half(0),
-                  half_float::half(0),
-                  half_float::half(0),
-                  half_float::half(0)
+                  half_float::half(9.22747e-16f),
+                  half_float::half(-2.89155e-15f),
+                  half_float::half(0.0f),
+                  half_float::half(0.0f),
               };
 
     // Check Values
@@ -146,13 +141,9 @@ TEST(SVD, ProducesExpectedValuesRank3)
     SVD::decomp decomposition = SVD::pgmSvdToHalfStream(fake_file, 3);
 
     // Check meta information
-    EXPECT_EQ(decomposition.meta.U_width, 3);
     EXPECT_EQ(decomposition.meta.U_height, 8);
-
-    EXPECT_EQ(decomposition.meta.S_length, 3);
-
     EXPECT_EQ(decomposition.meta.V_width, 8);
-    EXPECT_EQ(decomposition.meta.V_height, 3);
+    EXPECT_EQ(decomposition.meta.rank, 3);
 
     // Check matrix information
     EXPECT_EQ(decomposition.U.size(), 8 * 3);
@@ -168,6 +159,7 @@ TEST(SVD, ProducesExpectedValuesRank3)
                   half_float::half(0.387861f),
                   half_float::half(0.401327f),
                   half_float::half(0.0f),
+
                   half_float::half(0.0f),
                   half_float::half(0.864596f),
                   half_float::half(-0.23993f),
@@ -176,20 +168,21 @@ TEST(SVD, ProducesExpectedValuesRank3)
                   half_float::half(-0.229162f),
                   half_float::half(-0.165105f),
                   half_float::half(0.0f),
+
                   half_float::half(0.0f),
-                  half_float::half(0.0643104f),
-                  half_float::half(0.265503f),
-                  half_float::half(0.265503f),
-                  half_float::half(0.265503f),
-                  half_float::half(0.0459302f),
-                  half_float::half(-0.884465f),
-                  half_float::half(0.0f)
+                  half_float::half(-0.0643104f),
+                  half_float::half(-0.265503f),
+                  half_float::half(-0.265503f),
+                  half_float::half(-0.265503f),
+                  half_float::half(-0.0459302f),
+                  half_float::half(0.884465f),
+                  half_float::half(0.0f),
               };
 
     std::vector<half_float::half> expected_S = {
                 half_float::half(817.371f),
                 half_float::half(330.45f),
-                half_float::half(93.8889f)
+                half_float::half(93.8889f),
               };
 
     std::vector<half_float::half> expected_V = {
@@ -199,22 +192,24 @@ TEST(SVD, ProducesExpectedValuesRank3)
                   half_float::half(0.0f),
                   half_float::half(0.0f),
                   half_float::half(0.0f),
-                  half_float::half(0.0f),
                   half_float::half(1.0f),
+                  half_float::half(0.0f),
+
                   half_float::half(0.0787598f),
                   half_float::half(0.0711648f),
-                  half_float::half(-0.412309f),
+                  half_float::half(0.412309f),
                   half_float::half(0.904839f),
+                  half_float::half(9.22747e-16f),
+                  half_float::half(-2.89155e-15f),
                   half_float::half(0.0f),
                   half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+
                   half_float::half(0.110067f),
                   half_float::half(0.211678f),
-                  half_float::half(-0.873538f),
+                  half_float::half(0.873538f),
                   half_float::half(-0.424275f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+                  half_float::half(-1.32019e-16f),
+                  half_float::half(1.41098e-15f),
                   half_float::half(0.0f),
                   half_float::half(0.0f),
               };
@@ -232,13 +227,9 @@ TEST(SVD, ProducesExpectedValuesRank4)
     SVD::decomp decomposition = SVD::pgmSvdToHalfStream(fake_file, 4);
 
     // Check meta information
-    EXPECT_EQ(decomposition.meta.U_width, 4);
     EXPECT_EQ(decomposition.meta.U_height, 8);
-
-    EXPECT_EQ(decomposition.meta.S_length, 4);
-
     EXPECT_EQ(decomposition.meta.V_width, 8);
-    EXPECT_EQ(decomposition.meta.V_height, 4);
+    EXPECT_EQ(decomposition.meta.rank, 4);
 
     // Check matrix information
     EXPECT_EQ(decomposition.U.size(), 8 * 4);
@@ -254,6 +245,7 @@ TEST(SVD, ProducesExpectedValuesRank4)
                   half_float::half(0.387861f),
                   half_float::half(0.401327f),
                   half_float::half(0.0f),
+
                   half_float::half(0.0f),
                   half_float::half(0.864596f),
                   half_float::half(-0.23993f),
@@ -262,14 +254,16 @@ TEST(SVD, ProducesExpectedValuesRank4)
                   half_float::half(-0.229162f),
                   half_float::half(-0.165105f),
                   half_float::half(0.0f),
+
                   half_float::half(0.0f),
-                  half_float::half(0.0643104f),
-                  half_float::half(0.265503f),
-                  half_float::half(0.265503f),
-                  half_float::half(0.265503f),
-                  half_float::half(0.0459302f),
-                  half_float::half(-0.884465f),
+                  half_float::half(-0.0643104f),
+                  half_float::half(-0.265503f),
+                  half_float::half(-0.265503f),
+                  half_float::half(-0.265503f),
+                  half_float::half(-0.0459302f),
+                  half_float::half(0.884465f),
                   half_float::half(0.0f),
+
                   half_float::half(0.0f),
                   half_float::half(0.00212611f),
                   half_float::half(-0.241977f),
@@ -294,31 +288,34 @@ TEST(SVD, ProducesExpectedValuesRank4)
                   half_float::half(0.0f),
                   half_float::half(0.0f),
                   half_float::half(0.0f),
-                  half_float::half(0.0f),
                   half_float::half(1.0f),
+                  half_float::half(0.0f),
+
                   half_float::half(0.0787598f),
                   half_float::half(0.0711648f),
-                  half_float::half(-0.412309f),
+                  half_float::half(0.412309f),
                   half_float::half(0.904839f),
+                  half_float::half(9.22747e-16f),
+                  half_float::half(-2.89155e-15f),
                   half_float::half(0.0f),
                   half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+
                   half_float::half(0.110067f),
                   half_float::half(0.211678f),
-                  half_float::half(-0.873538f),
+                  half_float::half(0.873538f),
                   half_float::half(-0.424275f),
+                  half_float::half(-1.32019e-16f),
+                  half_float::half(1.41098e-15f),
                   half_float::half(0.0f),
                   half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+
                   half_float::half(0.596217f),
                   half_float::half(-0.150983f),
-                  half_float::half(0.0474702f),
+                  half_float::half(-0.0474702f),
                   half_float::half(-0.018391f),
+                  half_float::half(0.766656f),
+                  half_float::half(-0.177134f),
                   half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(-0.786853f),
                   half_float::half(0.0f),
               };
 
