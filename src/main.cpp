@@ -26,6 +26,24 @@ void random_pgm(string filename, int xsize, int ysize)
     }
 }
 
+void random_pgm2(string filename, int xsize, int ysize, int maxlimit, int minlimit)
+{
+    ofstream newpgm;
+    int num;
+    filename = filename + ".pgm";
+    newpgm.open(filename);
+    pgma_write_header(newpgm,filename,xsize,ysize,255);
+    for(int i=0;i<xsize;i++)
+    {
+        for(int z=0;z<ysize;z++)
+        {
+            num = rand()%(maxlimit-minlimit)+1+minlimit;
+            newpgm << num << " ";
+        }
+        newpgm << "\n";
+    }
+}
+
 int main(int argc, char **argv)
 {
   try {
@@ -87,6 +105,23 @@ int main(int argc, char **argv)
     case ProgramOptions::AlgorithmSelection::RANDOM_IMAGE:
     {
         std::string output_file = ProgramOptions::text_pgm_filepath();
+        bool check = false;
+        string filename;
+        int maxn,minn;
+        //char file_out_name[80];
+        //strcpy(file_out_name, output_file.c_str());
+        // TODO Random image generation here.
+        //std::string filename = "abcd";
+        if(output_file == "!")
+        {
+            check = true;
+            std::cout << "Please input the filename : ";
+            std::cin >> filename;
+            std::cout << "Please input the max value : ";
+            std::cin >> maxn;
+            std::cout << "Please input the min value : ";
+            std::cin >> minn;
+        }
         int xsize;
         int ysize;
         std::cout << "Please input the xsize : ";
@@ -94,7 +129,10 @@ int main(int argc, char **argv)
         std::cout << "Please input the ysize : ";
         std::cin >> ysize;
         //cout << xsize << " " << ysize;
-        random_pgm(output_file,xsize,ysize);
+        if (check == false)
+            random_pgm(output_file,xsize,ysize);
+        else
+            random_pgm2(filename,xsize,ysize,maxn,minn);
         std::cout << "pass";
         return 0;
     }
