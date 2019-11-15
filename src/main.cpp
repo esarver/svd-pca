@@ -4,30 +4,15 @@
 #include <string>
 #include <unistd.h>
 #include <string.h>
+#include <ctime>
+
 
 #include "convert.hpp"
 #include "program_options.hpp"
 
-void random_pgm(string filename, int xsize, int ysize)
+void random_pgm(string filename, int xsize, int ysize, int maxlimit, int minlimit)
 {
-    ofstream newpgm;
-    int num;
-    filename = filename + ".pgm";
-    newpgm.open(filename);
-    pgma_write_header(newpgm,filename,xsize,ysize,255);
-    for(int i=0;i<xsize;i++)
-    {
-        for(int z=0;z<ysize;z++)
-        {
-            num = rand()%255+1;
-            newpgm << num << " ";
-        }
-        newpgm << "\n";
-    }
-}
-
-void random_pgm2(string filename, int xsize, int ysize, int maxlimit, int minlimit)
-{
+    srand(time(NULL));
     ofstream newpgm;
     int num;
     filename = filename + ".pgm";
@@ -43,6 +28,7 @@ void random_pgm2(string filename, int xsize, int ysize, int maxlimit, int minlim
         newpgm << "\n";
     }
 }
+
 
 int main(int argc, char **argv)
 {
@@ -107,32 +93,17 @@ int main(int argc, char **argv)
         std::string output_file = ProgramOptions::text_pgm_filepath();
         bool check = false;
         string filename;
-        int maxn,minn;
-        //char file_out_name[80];
-        //strcpy(file_out_name, output_file.c_str());
-        // TODO Random image generation here.
-        //std::string filename = "abcd";
-        if(output_file == "!")
+        int maxn = 255,minn = 0;
+        //std::cout << argc;
+        if(argc == 7 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 255 && atoi(argv[6]) >= 0 && atoi(argv[6]) <= 255 && atoi(argv[6]) < atoi(argv[5]))
         {
-            check = true;
-            std::cout << "Please input the filename : ";
-            std::cin >> filename;
-            std::cout << "Please input the max value : ";
-            std::cin >> maxn;
-            std::cout << "Please input the min value : ";
-            std::cin >> minn;
+            maxn = atoi(argv[5]);
+            minn = atoi(argv[6]);
+            //std::cout << "limit";
         }
-        int xsize;
-        int ysize;
-        std::cout << "Please input the xsize : ";
-        std::cin >> xsize;
-        std::cout << "Please input the ysize : ";
-        std::cin >> ysize;
-        //cout << xsize << " " << ysize;
-        if (check == false)
-            random_pgm(output_file,xsize,ysize);
-        else
-            random_pgm2(filename,xsize,ysize,maxn,minn);
+        int xsize = atoi(argv[3]);
+        int ysize = atoi(argv[4]);
+        random_pgm(output_file,xsize,ysize,maxn,minn);
         std::cout << "pass";
         return 0;
     }
