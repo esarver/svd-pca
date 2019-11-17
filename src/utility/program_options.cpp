@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <experimental/filesystem>
+#include <regex>
 
 namespace fs = std::experimental::filesystem;
 
@@ -213,26 +214,43 @@ void ProgramOptions::parse(int argc, char** argv)
         switch (instance()->m_algorithm)
         {
         case AlgorithmSelection::TO_BINARY:
+        {
             instance()->m_text_pgm_filepath = argv[optind + offset_optind];
-            //TODO: set binary name
-            instance()->m_binary_pgm_filepath = instance()->m_text_pgm_filepath;
-            instance()->m_binary_pgm_filepath.append(".b");
+            std::string extension = fs::path(instance()->m_text_pgm_filepath).extension();
+            std::string filename = fs::path(instance()->m_text_pgm_filepath).stem();
+            filename.append("_b.");
+            filename.append(extension);
+            instance()->m_binary_pgm_filepath = fs::path(instance()->m_text_pgm_filepath).replace_filename(filename);
             return;
+        }
         case AlgorithmSelection::FROM_BINARY:
+        {
             instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
-            //TODO: set ascii name
-            instance()->m_text_pgm_filepath = instance()->m_binary_pgm_filepath;
-            instance()->m_text_pgm_filepath.append(".a");
+            std::string extension = fs::path(instance()->m_binary_pgm_filepath).extension();
+            std::string filename = fs::path(instance()->m_binary_pgm_filepath).stem();
+
+            if(const auto pos = filename.rfind("_b") != std::string::npos)
+            {
+                filename.erase(pos, 2);
+            }
+            filename.append("_copy.");
+            filename.append(extension);
+            instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath).replace_filename(filename);
             return;
+        }
         case AlgorithmSelection::COMPRESSED_SVD:
+        {
             if(offset_optind == 0)
             {
                 instance()->m_pgm_header_filepath = argv[optind + offset_optind];
-            }
-            else if (offset_optind == 1)
-            {
+            } else if (offset_optind == 1) {
                 instance()->m_svd_matrices_filepath = argv[optind + offset_optind];
-                //TODO: set binary name
+                std::string filename = fs::path(instance()->m_svd_matrices_filepath).stem();
+                std::string extension = fs::path(instance()->m_svd_matrices_filepath).extension();
+                filename.append("_b");
+                filename.append(".pgm");
+                filename.append(".SVD");
+                instance()->m_binary_pgm_filepath = fs::path(instance()->m_svd_matrices_filepath).replace_filename(filename);
             }
             else
             {
@@ -251,14 +269,24 @@ void ProgramOptions::parse(int argc, char** argv)
             }
             
             break;
+        }
         case AlgorithmSelection::FROM_COMPRESSED_SVD:
+        {
             instance()->m_binary_pgm_filepath = argv[optind + offset_optind];
-            //TODO: Set ascii name
-            instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath);//TODO!!!
+            std::string filename = fs::path(instance()->m_binary_pgm_filepath).stem();
+            instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath).replace_extension(); // Remove ".SVD"
+            std::string extension = fs::path(instance()->m_binary_pgm_filepath).extension();
+            instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath).replace_extension().replace_extension(); // Remove ".pgm"
+            instance()->m_text_pgm_filepath = std::regex_replace(instance()->m_text_pgm_filepath, std::regex("_b"), "");
+            instance()->m_text_pgm_filepath.append("_k");
+            instance()->m_text_pgm_filepath.append(".pgm");
             return;
+        }
         case AlgorithmSelection::RANDOM_IMAGE:
+        {
             instance()->m_text_pgm_filepath = argv[optind + offset_optind];
             return;
+        }
         } 
     }
 }

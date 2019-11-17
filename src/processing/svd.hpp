@@ -3,13 +3,29 @@
 #include <vector>
 #include <tuple>
 #include <utility>
+#include <include/half.hpp>
 
-#include "float16.hpp"
 class SVD {
 public:
-    std::tuple<std::pair<int, int>, std::vector<f16>, std::vector<f16>, std::pair<int, int>, std::vector<f16>> pgmSvdToFloat16Stream(std::istream pgm, int rank);
+    struct metadata
+    {
+        long U_height;
+        long V_width;
+        long rank;
+        unsigned char max_value;
+    };
 
-    void writePgmAsSvd(const std::string &output_path, int U_width, int U_height, std::vector<f16> U, std::vector<f16> S, int V_width, int V_height, std::vector<f16> V);
+    struct decomp
+    {
+        metadata meta;
+        std::vector<half_float::half> U;
+        std::vector<half_float::half> S;
+        std::vector<half_float::half> V;
+    };
 
-    std::string svdToPGM(std::istream svd);
+    static decomp pgmSvdToHalfStream(std::istream &header, std::istream &pgm, int rank);
+
+    static void writePgmAsSvd(const std::string &output_path, decomp decomposition);
+
+    static std::tuple<std::string, long> svdToPGMString(const std::string &input_filename);
 };
