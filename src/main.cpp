@@ -5,13 +5,15 @@
 #include <unistd.h>
 #include <string.h>
 #include <regex>
+#include <ctime>
 
 #include "convert.hpp"
 #include "program_options.hpp"
 #include "svd.hpp"
 
-void random_pgm(string filename, int xsize, int ysize)
+void random_pgm(string filename, int xsize, int ysize, int maxlimit, int minlimit)
 {
+    srand(time(NULL));
     ofstream newpgm;
     int num;
     filename = filename + ".pgm";
@@ -21,12 +23,13 @@ void random_pgm(string filename, int xsize, int ysize)
     {
         for(int z=0;z<ysize;z++)
         {
-            num = rand()%255+1;
+            num = rand()%(maxlimit-minlimit)+1+minlimit;
             newpgm << num << " ";
         }
         newpgm << "\n";
     }
 }
+
 
 int main(int argc, char **argv)
 {
@@ -109,14 +112,19 @@ int main(int argc, char **argv)
     case ProgramOptions::AlgorithmSelection::RANDOM_IMAGE:
     {
         std::string output_file = ProgramOptions::text_pgm_filepath();
-        int xsize;
-        int ysize;
-        std::cout << "Please input the xsize : ";
-        std::cin >> xsize;
-        std::cout << "Please input the ysize : ";
-        std::cin >> ysize;
-        //cout << xsize << " " << ysize;
-        random_pgm(output_file,xsize,ysize);
+        bool check = false;
+        string filename;
+        int maxn = 255,minn = 0;
+        //std::cout << argc;
+        if(argc == 7 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 255 && atoi(argv[6]) >= 0 && atoi(argv[6]) <= 255 && atoi(argv[6]) < atoi(argv[5]))
+        {
+            maxn = atoi(argv[5]);
+            minn = atoi(argv[6]);
+            //std::cout << "limit";
+        }
+        int xsize = atoi(argv[3]);
+        int ysize = atoi(argv[4]);
+        random_pgm(output_file,xsize,ysize,maxn,minn);
         std::cout << "pass";
         return 0;
     }
