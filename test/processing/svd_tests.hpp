@@ -5,11 +5,12 @@
 #include <string>
 #include "svd.hpp"
 
-const std::string file_string = R"(P2
+const std::string header_string = R"(P2
 #Some comment.
 8 8
-255
-0 0 0 0 0 0 0 0
+255)";
+
+const std::string pgm_string = R"(0 0 0 0 0 0 0 0
 0 50 100 200 255 255 255 0
 0 0 0 200 255 0 0 0
 0 0 0 200 255 0 0 0
@@ -21,9 +22,10 @@ const std::string file_string = R"(P2
 
 TEST(SVD, ProducesExpectedValuesRank1)
 {
-    std::stringstream fake_file(file_string);
+    std::stringstream header(header_string);
+    std::stringstream pgm(pgm_string);
 
-    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(fake_file, 1);
+    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(header, pgm, 1);
 
     // Check meta information
     EXPECT_EQ(decomposition.meta.U_height, 8);
@@ -51,14 +53,14 @@ TEST(SVD, ProducesExpectedValuesRank1)
               };
 
     std::vector<half_float::half> expected_V = {
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(1.0f),
-                  half_float::half(0.0f),
+                half_float::half(       0.0f),
+                half_float::half( 0.0787598f),
+                half_float::half(  0.110067f),
+                half_float::half(  0.596217f),
+                half_float::half(  0.760176f),
+                half_float::half(  0.155467f),
+                half_float::half(  0.155467f),
+                half_float::half(       0.0f),
               };
 
     // Check Values
@@ -69,9 +71,10 @@ TEST(SVD, ProducesExpectedValuesRank1)
 
 TEST(SVD, ProducesExpectedValuesRank2)
 {
-    std::stringstream fake_file(file_string);
+    std::stringstream header(header_string);
+    std::stringstream pgm(pgm_string);
 
-    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(fake_file, 2);
+    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(header, pgm, 2);
 
     // Check meta information
     EXPECT_EQ(decomposition.meta.U_height, 8);
@@ -109,23 +112,23 @@ TEST(SVD, ProducesExpectedValuesRank2)
               };
 
     std::vector<half_float::half> expected_V = {
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(1.0f),
-                  half_float::half(0.0f),
+                half_float::half(       0.0f),
+                half_float::half( 0.0787598f),
+                half_float::half(  0.110067f),
+                half_float::half(  0.596217f),
+                half_float::half(  0.760176f),
+                half_float::half(  0.155467f),
+                half_float::half(  0.155467f),
+                half_float::half(       0.0f),
 
-                  half_float::half(0.0787598f),
-                  half_float::half(0.0711648f),
-                  half_float::half(0.412309f),
-                  half_float::half(0.904839f),
-                  half_float::half(9.22747e-16f),
-                  half_float::half(-2.89155e-15f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+                half_float::half(      0.0f),
+                half_float::half(0.0711648f),
+                half_float::half( 0.211678f),
+                half_float::half(-0.150983f),
+                half_float::half(-0.192503f),
+                half_float::half( 0.667186f),
+                half_float::half( 0.667186f),
+                half_float::half(      0.0f),
               };
 
     // Check Values
@@ -136,9 +139,10 @@ TEST(SVD, ProducesExpectedValuesRank2)
 
 TEST(SVD, ProducesExpectedValuesRank3)
 {
-    std::stringstream fake_file(file_string);
+    std::stringstream header(header_string);
+    std::stringstream pgm(pgm_string);
 
-    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(fake_file, 3);
+    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(header, pgm, 3);
 
     // Check meta information
     EXPECT_EQ(decomposition.meta.U_height, 8);
@@ -186,32 +190,32 @@ TEST(SVD, ProducesExpectedValuesRank3)
               };
 
     std::vector<half_float::half> expected_V = {
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(1.0f),
-                  half_float::half(0.0f),
+                half_float::half(       0.0f),
+                half_float::half( 0.0787598f),
+                half_float::half(  0.110067f),
+                half_float::half(  0.596217f),
+                half_float::half(  0.760176f),
+                half_float::half(  0.155467f),
+                half_float::half(  0.155467f),
+                half_float::half(       0.0f),
 
-                  half_float::half(0.0787598f),
-                  half_float::half(0.0711648f),
-                  half_float::half(0.412309f),
-                  half_float::half(0.904839f),
-                  half_float::half(9.22747e-16f),
-                  half_float::half(-2.89155e-15f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+                half_float::half(      0.0f),
+                half_float::half(0.0711648f),
+                half_float::half( 0.211678f),
+                half_float::half(-0.150983f),
+                half_float::half(-0.192503f),
+                half_float::half( 0.667186f),
+                half_float::half( 0.667186f),
+                half_float::half(      0.0f),
 
-                  half_float::half(0.110067f),
-                  half_float::half(0.211678f),
-                  half_float::half(0.873538f),
-                  half_float::half(-0.424275f),
-                  half_float::half(-1.32019e-16f),
-                  half_float::half(1.41098e-15f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+                half_float::half(       0.0f),
+                half_float::half(  0.412309f),
+                half_float::half(  0.873538f),
+                half_float::half(-0.0474702f),
+                half_float::half(-0.0605245f),
+                half_float::half( -0.174666f),
+                half_float::half( -0.174666f),
+                half_float::half(       0.0f),
               };
 
     // Check Values
@@ -222,9 +226,10 @@ TEST(SVD, ProducesExpectedValuesRank3)
 
 TEST(SVD, ProducesExpectedValuesRank4)
 {
-    std::stringstream fake_file(file_string);
+    std::stringstream header(header_string);
+    std::stringstream pgm(pgm_string);
 
-    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(fake_file, 4);
+    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(header, pgm, 4);
 
     // Check meta information
     EXPECT_EQ(decomposition.meta.U_height, 8);
@@ -282,45 +287,119 @@ TEST(SVD, ProducesExpectedValuesRank4)
               };
 
     std::vector<half_float::half> expected_V = {
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-                  half_float::half(1.0f),
-                  half_float::half(0.0f),
+                half_float::half(       0.0f),
+                half_float::half( 0.0787598f),
+                half_float::half(  0.110067f),
+                half_float::half(  0.596217f),
+                half_float::half(  0.760176f),
+                half_float::half(  0.155467f),
+                half_float::half(  0.155467f),
+                half_float::half(       0.0f),
 
-                  half_float::half(0.0787598f),
-                  half_float::half(0.0711648f),
-                  half_float::half(0.412309f),
-                  half_float::half(0.904839f),
-                  half_float::half(9.22747e-16f),
-                  half_float::half(-2.89155e-15f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+                half_float::half(      0.0f),
+                half_float::half(0.0711648f),
+                half_float::half( 0.211678f),
+                half_float::half(-0.150983f),
+                half_float::half(-0.192503f),
+                half_float::half( 0.667186f),
+                half_float::half( 0.667186f),
+                half_float::half(      0.0f),
 
-                  half_float::half(0.110067f),
-                  half_float::half(0.211678f),
-                  half_float::half(0.873538f),
-                  half_float::half(-0.424275f),
-                  half_float::half(-1.32019e-16f),
-                  half_float::half(1.41098e-15f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
+                half_float::half(       0.0f),
+                half_float::half(  0.412309f),
+                half_float::half(  0.873538f),
+                half_float::half(-0.0474702f),
+                half_float::half(-0.0605245f),
+                half_float::half( -0.174666f),
+                half_float::half( -0.174666f),
+                half_float::half(       0.0f),
 
-                  half_float::half(0.596217f),
-                  half_float::half(-0.150983f),
-                  half_float::half(-0.0474702f),
-                  half_float::half(-0.018391f),
-                  half_float::half(0.766656f),
-                  half_float::half(-0.177134f),
-                  half_float::half(0.0f),
-                  half_float::half(0.0f),
-              };
+                half_float::half(       0.0f),
+                half_float::half(  0.904839f),
+                half_float::half( -0.424275f),
+                half_float::half( -0.018391f),
+                half_float::half(-0.0234485f),
+                half_float::half( 0.0135842f),
+                half_float::half( 0.0135842f),
+                half_float::half(       0.0f),
+            };
 
     // Check Values
     EXPECT_EQ(decomposition.U, expected_U);
     EXPECT_EQ(decomposition.S, expected_S);
     EXPECT_EQ(decomposition.V, expected_V);
+}
+
+TEST(SVD, GeneratesPgmFromSVDRank4)
+{
+    std::stringstream header(header_string);
+    std::stringstream pgm(pgm_string);
+
+    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(header, pgm, 4);
+
+    std::string svd_filepath = "/tmp/SVD_TEST_RANK4.pgm.SVD";
+    SVD::writePgmAsSvd(svd_filepath, decomposition);
+
+    auto [gen_pgm_string, rank] = SVD::svdToPGMString(svd_filepath);
+
+    std::string expected_pgm = R"(P2
+8 8
+255
+0 0 0 0 0 0 0 0 0 50 100 200 255 255 255 0 0 0 0 200 255 0
+0 0 0 0 0 200 255 0 0 0 0 0 0 200 255 0 0 0 0 50 0 200
+255 0 0 0 0 50 100 200 255 0 0 0 0 0 0 0 0 0 0 0 )";
+
+    EXPECT_EQ(gen_pgm_string, expected_pgm);
+    EXPECT_EQ(rank, 4);
+}
+
+TEST(SVD, GeneratesPgmFromSVDRank8)
+{
+    std::stringstream header(header_string);
+    std::stringstream pgm(pgm_string);
+
+    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(header, pgm, 8);
+
+    std::string svd_filepath = "/tmp/SVD_TEST_RANK8.pgm.SVD";
+    SVD::writePgmAsSvd(svd_filepath, decomposition);
+
+    auto [gen_pgm_string, rank] = SVD::svdToPGMString(svd_filepath);
+
+    std::string expected_pgm = R"(P2
+8 8
+255
+0 0 0 0 0 0 0 0 0 50 100 200 255 255 255 0 0 0 0 200 255 0
+0 0 0 0 0 200 255 0 0 0 0 0 0 200 255 0 0 0 0 50 0 200
+255 0 0 0 0 50 100 200 255 0 0 0 0 0 0 0 0 0 0 0 )";
+
+    EXPECT_EQ(gen_pgm_string, expected_pgm);
+    EXPECT_EQ(rank, 8);
+}
+
+TEST(SVD, SquigleTest)
+{
+    std::string hstring = R"(P2
+5 3
+255)";
+    std::string pstring = R"(50 0 0 0 0
+0 100 0 200 0
+0 0 150 0 250
+)";
+    std::stringstream header(hstring);
+    std::stringstream pgm(pstring);
+
+    SVD::decomp decomposition = SVD::pgmSvdToHalfStream(header, pgm, 3);
+
+    std::string svd_filepath = "/tmp/SVD_TEST_RANK4.pgm.SVD";
+    SVD::writePgmAsSvd(svd_filepath, decomposition);
+
+    auto [gen_pgm_string, rank] = SVD::svdToPGMString(svd_filepath);
+
+    std::string expected_pgm = R"(P2
+5 3
+255
+50 0 0 0 0 0 100 0 200 0 0 0 150 0 250 )";
+
+    EXPECT_EQ(gen_pgm_string, expected_pgm);
+    EXPECT_EQ(rank, 3);
 }

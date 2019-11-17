@@ -4,9 +4,11 @@
 #include <string>
 #include <unistd.h>
 #include <string.h>
+#include <regex>
 
 #include "convert.hpp"
 #include "program_options.hpp"
+#include "svd.hpp"
 
 void random_pgm(string filename, int xsize, int ysize)
 {
@@ -74,7 +76,18 @@ int main(int argc, char **argv)
         std::string input_file = ProgramOptions::svd_matrices_filepath();
         std::string header_file = ProgramOptions::pgm_header_filepath();
         std::string output_file = ProgramOptions::binary_pgm_filepath();
+        int rank = ProgramOptions::approximation_rank();
         // TODO: SVD implementation here...
+
+        std::ifstream header(header_file);
+        std::ifstream pgm(input_file);
+        SVD::decomp decomposition = SVD::pgmSvdToHalfStream(header, pgm, rank);
+        header.close();
+        pgm.close();
+
+        SVD::writePgmAsSvd(output_file, decomposition);
+
+        std::cout << "Wrote compressed image to \"" << output_file << "\"" << std::endl;
         return 0;
     }
     case ProgramOptions::AlgorithmSelection::FROM_COMPRESSED_SVD:
@@ -82,6 +95,15 @@ int main(int argc, char **argv)
         std::string input_file = ProgramOptions::binary_pgm_filepath();
         std::string output_file = ProgramOptions::text_pgm_filepath();
         // TODO: (SVD)^-1 implementation here...
+
+        auto [pgm, rank] = SVD::svdToPGMString(input_file);
+
+        output_file = std::regex_replace(output_file, std::regex("_k"), "_" + std::to_string(rank));
+        std::ofstream output(output_file);
+        output << pgm;
+
+        output.close();
+        std::cout << "Wrote decompressed image to \"" << output_file << "\"" << std::endl;
         return 0;
     }
     case ProgramOptions::AlgorithmSelection::RANDOM_IMAGE:

@@ -7,7 +7,7 @@
 
 #include <Eigen/SVD>
 
-SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
+SVD::decomp SVD::pgmSvdToHalfStream(std::istream &header, std::istream &pgm, int rank)
 {
     int line_count = 0;
     unsigned int width = 0;
@@ -16,7 +16,7 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
 
     std::vector<double> original_values;
 
-    for(std::string line; std::getline(pgm, line);line_count++) {
+    for(std::string line; std::getline(header, line);line_count++) {
         if(line.find('#') != std::string::npos)
         {
             line_count--;
@@ -28,8 +28,8 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
            std::string width_string;
            std::string height_string;
 
-           std::getline(ss, width_string, ' ');
            std::getline(ss, height_string, ' ');
+           std::getline(ss, width_string, ' ');
 
            width = std::stoi(width_string);
            height = std::stoi(height_string);
@@ -38,13 +38,13 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
         {
             max_value = std::stoi(line);
         }
-        else if(line_count >= 3) // We don't need the "max value" for our calculations.
+    }
+    for(std::string line; std::getline(pgm, line);)
+    {
+        std::stringstream ss(line);
+        for(std::string value; std::getline(ss, value, ' ');)
         {
-            std::stringstream ss(line);
-            for(std::string value; std::getline(ss, value, ' ');)
-            {
-                original_values.push_back(std::stod(value));
-            }
+            original_values.push_back(std::stoi(value));
         }
     }
 
@@ -66,7 +66,7 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
     auto U = svd.matrixU();
     auto S = svd.singularValues();
     auto V = svd.matrixV();
-
+//    std::cout << "M:" << std::endl << M << std::endl;
 //    std::cout << "U:" << std::endl << U << std::endl;
 //    std::cout << "S:" << std::endl << S << std::endl;
 //    std::cout << "V:" << std::endl << V << std::endl;
@@ -89,15 +89,12 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
     {
         double value = S(row, 0);
         half_float::half half_p = half_float::half_cast<half_float::half>(value);
-        if(half_p > 0 || half_p < 0)
-        {
-            S_vec.push_back(half_p);
-        }
+        S_vec.push_back(half_p);
     }
 
-    for(unsigned int row = 0; row < rank; row++)
+    for (unsigned int column = 0; column < rank; column++)
     {
-        for (unsigned int column = 0; column < V.cols(); column++)
+        for(unsigned int row = 0; row < V.rows(); row++)
         {
             double value = V(row, column);
             half_float::half half_p = half_float::half_cast<half_float::half>(value);
@@ -108,7 +105,7 @@ SVD::decomp SVD::pgmSvdToHalfStream(std::istream &pgm, int rank)
     return {
         {
             U.rows(),
-            V.cols(),
+            V.rows(),
             rank,
             max_value
         },
@@ -145,7 +142,7 @@ void SVD::writePgmAsSvd(const std::string &output_path, decomp decomposition)
     file.close();
 }
 
-std::string SVD::svdToPGM(const std::string &input_filename, const std::string &output_filename)
+std::tuple<std::string, long> SVD::svdToPGMString(const std::string &input_filename)
 {
     std::ifstream file(input_filename, std::ios::in | std::ios::binary);
 
@@ -165,29 +162,41 @@ std::string SVD::svdToPGM(const std::string &input_filename, const std::string &
     // Calculate approximated PGM
     unsigned long U_size =  sizes->rank * sizes->U_height;
     unsigned long V_size = sizes->V_width * sizes->rank;
-    Eigen::MatrixXd U(sizes->U_height, sizes->rank);
-    Eigen::MatrixXd S(sizes->V_width, sizes->U_height);
-    Eigen::MatrixXd V(sizes->rank, sizes->V_width);
-    unsigned long count = 0;
-    for(const auto &value: values)
+    Eigen::MatrixXd U = Eigen::MatrixXd::Zero(sizes->U_height, sizes->U_height);
+    Eigen::MatrixXd S = Eigen::MatrixXd::Zero(sizes->U_height, sizes->V_width);
+    Eigen::MatrixXd V = Eigen::MatrixXd::Zero(sizes->V_width, sizes->V_width);
+    long count = 0;
+    for(const auto &value: values)// TODO ensure correct order...
     {
         if(count < (U_size))
         {
-            U(count%sizes->rank, count/sizes->rank) = half_float::half_cast<double>(value);
+            long row = count%sizes->U_height;
+            long col = (count < sizes->U_height)? 0 : (count)/sizes->U_height;
+//            std::cout << "U(" << row << ", " << col << ")" <<std::endl;
+            U(row, col) = half_float::half_cast<double>(value);
 
         }
         else if(count < (U_size) + sizes->rank )
         {
             S(count - U_size, count - U_size) = half_float::half_cast<double>(value);
         }
-        else if(count < (U_size + sizes->rank) + V_size)
+        else
         {
-            unsigned long v_count = count - (U_size + sizes->rank);
-            S(v_count % sizes->V_width, v_count / sizes->V_width) = half_float::half_cast<double>(value);
+            long v_count = count - (U_size + sizes->rank);
+            long row = v_count%sizes->V_width;
+            long col = (count < sizes->V_width) ? 0 : (v_count)/sizes->V_width;
+//            std::cout << "V(" << row << ", " << col << ")" <<std::endl;
+            V(row, col) = half_float::half_cast<double>(value);
         }
+        count++;
     }
+//    std::cout << "U: " << std::endl << U << std::endl;
+//    std::cout << "S: " << std::endl << S << std::endl;
+//    std::cout << "V: " << std::endl << V << std::endl;
 
-    Eigen::MatrixXd pgm_approx = U * S * V.transpose();
+    Eigen::MatrixXd pgm_approx = U * (S * V.transpose());
+
+//    std::cout << "APPROXIMATED PICTURE" << std::endl << pgm_approx << std::endl;
 
     // round to nearest integer value and get other info.
     unsigned long width = pgm_approx.cols();
@@ -204,28 +213,36 @@ std::string SVD::svdToPGM(const std::string &input_filename, const std::string &
             {
                 value = UCHAR_MAX;
             }
+            else if (value < 0)
+            {
+                value = 0;
+            }
 
             pgm_values.push_back((unsigned char)value);
         }
     }
 
-    std::ofstream out(output_filename, std::ios::out);
+    std::stringstream out;
     out << "P2" << std::endl;
-    out << width << " " << height << std::endl;
-    out << sizes->max_value << std::endl;
+    out << std::to_string(height) << " " << std::to_string(width) << std::endl;
+    out << std::to_string(sizes->max_value) << std::endl;
 
     int val_count = 0;
     for(const auto &value: pgm_values)
     {
-        out << value << " ";
+        out << std::to_string(value);
         if(val_count > 20)
         {
             val_count = -1;
             out << std::endl;
         }
+        else
+        {
+            out << " ";
+        }
         val_count++;
     }
 
     out.flush();
-    out.close();
+    return {out.str(), sizes->rank};
 }

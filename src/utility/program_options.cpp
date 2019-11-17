@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <experimental/filesystem>
+#include <regex>
 
 namespace fs = std::experimental::filesystem;
 
@@ -246,8 +247,8 @@ void ProgramOptions::parse(int argc, char** argv)
                 instance()->m_svd_matrices_filepath = argv[optind + offset_optind];
                 std::string filename = fs::path(instance()->m_svd_matrices_filepath).stem();
                 std::string extension = fs::path(instance()->m_svd_matrices_filepath).extension();
-                filename.append("_b.");
-                filename.append(extension);
+                filename.append("_b");
+                filename.append(".pgm");
                 filename.append(".SVD");
                 instance()->m_binary_pgm_filepath = fs::path(instance()->m_svd_matrices_filepath).replace_filename(filename);
             }
@@ -275,9 +276,10 @@ void ProgramOptions::parse(int argc, char** argv)
             std::string filename = fs::path(instance()->m_binary_pgm_filepath).stem();
             instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath).replace_extension(); // Remove ".SVD"
             std::string extension = fs::path(instance()->m_binary_pgm_filepath).extension();
-            filename.append("_k.");// TODO: Change k?
-            filename.append(extension);
-            instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath).replace_filename(filename);
+            instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath).replace_extension().replace_extension(); // Remove ".pgm"
+            instance()->m_text_pgm_filepath = std::regex_replace(instance()->m_text_pgm_filepath, std::regex("_b"), "");
+            instance()->m_text_pgm_filepath.append("_k");
+            instance()->m_text_pgm_filepath.append(".pgm");
             return;
         }
         case AlgorithmSelection::RANDOM_IMAGE:
