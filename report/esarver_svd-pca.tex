@@ -1,0 +1,125 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+
+\graphicspath{{../images/}}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Singular Value Decomposition and Principle Component Analysis}
+
+
+\author{\IEEEauthorblockN{Edwin Sarver}}
+
+\maketitle
+
+%TODO: https://tex.stackexchange.com/questions/13675/use-graphviz-within-tex
+
+\section{Introduction}
+Singular Value Decomposition (SVD) and Principle Component Analysis (PCA) are 
+mathematical algorithms that allow, primarily, for the simplification of data.
+This project implemented a command-line application to compress an image by 
+using SVD. PCA was used to analyze a %TODO dataset. 
+
+\section{Algorithms}\label{algo}
+Two main algorithms were used in this project: Singular Value Decomposition (SVD)
+and Principle Component Analysis (PCA).
+
+\subsection{Singular Value Decomposition (SVD)}
+Singular Value Decomposition is a mathematical method that uses Linear Algebra
+techniques to separate a matrix into the parts that are most mathematically 
+important. A given matrix $$M$$ can be separated into three matrices $$U$$, 
+$$\Sigma$$, and $$V$$.
+
+%TODO describe U, Sigma, and V and what they mean.
+
+\subsubsection{Theoretical Performance}
+The purpose of the SVD algorithm in this project was to produce a compressed image. 
+The implementation did not need to be fast. The performance of the algorithm was, 
+therefore, determined by the space-efficiency of the file that was output. 
+
+%TODO add Theoretical analysis of space efficiency
+
+%TODO Theoretical error analysis
+
+\subsubsection{Experimental Performance}
+
+%TODO add Experimental analysis of space efficiency
+
+%TODO Experimental error analysis
+
+\subsection{Principle Component Analysis (PCA)}
+Principle Component Analysis simplifies the analysis of multi-dimensional datasets by 
+reducing the dimensionality of the data. This make data visualization easier by finding
+which dimensions of the data have the greatest impact on the categorization of the data. 
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=3.25in]{Edmonds-Karp_Sparse.png}
+	\caption{Edmonds-Karp Performance on Sparse Graph: Run Time vs $VE^2$}
+	\label{ff_perf_sparse}
+\end{figure}
+
+
+\section{Insights}
+%TODO Efficiency, modularity, generalizablility, stability, etc. 
+
+
+\section{Test Cases}
+In this project, many forms of testing were utilized to test the image processing implementation: Unit tests, correctness tests,
+and performance tests.
+
+\subsection{Unit Tests}
+Unit tests were used to ensure that each part of the program functioned as intended even after
+changes were made to the code base. Included in these tests were tests to verify the algorithms
+described in section \ref{algo}. The PGM images used in the unit tests were very small and were
+only large enough to ensure that the basic functionality of the SVD algorithm was correct.  
+
+
+\subsection{Correctness Tests}
+Correctness tests for the SVD implementation were manual because they required the analysis of images.
+The image used to verify the correctness of the algorithms was the provided image of the College of 
+Arts and Sciences building on the University of Akron campus. In the course of testing, several issues
+were identified and corrected. Most of the issues that were identified arose from incorrectly calculating
+the position in the matrix that a particular element in the compressed, binary image file should occupy. 
+
+\subsection{Performance Tests}\label{perf_explanation} %TODO revisit this
+Performance test were also manual. A range of images were downloaded from %TODO pgm site.
+The images were translated into a binary implementation, then the original pgm was split 
+into a header and data file with a python script. The split files were then compressed 
+using the SVD compression algorithm given some applicable ranks. The resulting binary 
+files were then compared against the binary files that were generated directly from the 
+original PGM files for size. The compressed files were then uncompressed to pgm files 
+and were inspected for visual fidelity and the error from the original image was 
+calculated. The relative error for each rank on each image could therefore be calculated.
+
+The relative error can also be calculated from the singular values in the $$\Sigma$$ matrix.
+The program was therefore modified to print the singular values to a separate file for further
+analysis.
+
+%\subsection{Design}
+% TODO
+%\subsection{Results}
+% TODO
+
+\section{Conclusion}
+
+
+\begin{thebibliography}{00}
+    \bibitem{b1} T. H. Cormen, C. E. Leiserson, R. L. Rivest, and C. Stein, Introduction to Algorithms, 3rd ed., The MIT Press, 2009, pp. 594--602, 709--731 
+\end{thebibliography}
+
+\end{document}
