@@ -4,6 +4,7 @@
 #include <tuple>
 #include <utility>
 #include <include/half.hpp>
+#include <Eigen/SVD>
 
 class SVD {
 public:
@@ -28,4 +29,6 @@ public:
     static void writePgmAsSvd(const std::string &output_path, decomp decomposition);
 
     static std::tuple<std::string, long> svdToPGMString(const std::string &input_filename);
+    static SVD::decomp rankDecomp(const Eigen::MatrixXd &U, const Eigen::MatrixXd &S, const Eigen::MatrixXd &V, int rank, unsigned char max_value);
+    static void writeAllDecomps(std::istream &header, std::istream &pgm, const std::string &filename);
 };

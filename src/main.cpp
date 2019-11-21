@@ -43,7 +43,6 @@ int main(int argc, char **argv)
         //std::string input_file = ProgramOptions::text_pgm_filepath();
         //std::string output_file = ProgramOptions::binary_pgm_filepath();
         //std::cout << input_file << " " << output_file;
-        // TODO: ASCII to Binary implementation here...
         bool error;
         char file_in_name[80];
         char file_out_name[80];
@@ -61,7 +60,6 @@ int main(int argc, char **argv)
     {
         //std::string input_file = ProgramOptions::binary_pgm_filepath();
         //std::string output_file = ProgramOptions::text_pgm_filepath();
-        // TODO: Binary to ASCII implementation here...
         bool error;
         char file_in_name[80];
         char file_out_name[80];
@@ -80,7 +78,8 @@ int main(int argc, char **argv)
         std::string header_file = ProgramOptions::pgm_header_filepath();
         std::string output_file = ProgramOptions::binary_pgm_filepath();
         int rank = ProgramOptions::approximation_rank();
-        // TODO: SVD implementation here...
+
+        output_file += "_" + std::to_string(rank);
 
         std::ifstream header(header_file);
         std::ifstream pgm(input_file);
@@ -97,7 +96,6 @@ int main(int argc, char **argv)
     {
         std::string input_file = ProgramOptions::binary_pgm_filepath();
         std::string output_file = ProgramOptions::text_pgm_filepath();
-        // TODO: (SVD)^-1 implementation here...
 
         auto [pgm, rank] = SVD::svdToPGMString(input_file);
 
@@ -126,6 +124,19 @@ int main(int argc, char **argv)
         int ysize = atoi(argv[4]);
         random_pgm(output_file,xsize,ysize,maxn,minn);
         std::cout << "pass";
+        return 0;
+    }
+    case ProgramOptions::AlgorithmSelection::QUICK:
+    {
+        std::string input_file = ProgramOptions::svd_matrices_filepath();
+        std::string header_file = ProgramOptions::pgm_header_filepath();
+        std::string output_file = ProgramOptions::binary_pgm_filepath();
+        std::ifstream header(header_file);
+        std::ifstream pgm(input_file);
+
+        SVD::writeAllDecomps(header, pgm, output_file);
+        header.close();
+        pgm.close();
         return 0;
     }
     default:

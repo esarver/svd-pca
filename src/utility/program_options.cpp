@@ -176,7 +176,7 @@ void ProgramOptions::parse(int argc, char** argv)
         // algorithm to be used. This converts directly to the AlgorithmSelection
         // enum if it is between 1 and 4, inclusive.
         int selection = std::stoi(argv[optind]);
-        if( selection >= 1 && selection <= 5)
+        if( selection >= 1 && selection <= 6)
         {
             instance()->m_algorithm = (AlgorithmSelection) selection;
         }
@@ -238,6 +238,7 @@ void ProgramOptions::parse(int argc, char** argv)
             instance()->m_text_pgm_filepath = fs::path(instance()->m_binary_pgm_filepath).replace_filename(filename);
             return;
         }
+        case AlgorithmSelection::QUICK:
         case AlgorithmSelection::COMPRESSED_SVD:
         {
             if(offset_optind == 0)
