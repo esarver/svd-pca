@@ -235,7 +235,7 @@ bool pgma_to_pgmb ( char *file_in_name, char *file_out_name )
 {
   int *g;
   unsigned char *g2;
-  bool error;
+  bool error = false;
   int maxg;
   int xsize;
   int ysize;
